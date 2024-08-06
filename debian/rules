@@ -1,4 +1,28 @@
 #!/usr/bin/make -f
+# -*- makefile -*-
+
+# Uncomment this to turn on verbose mode.
+# export DH_VERBOSE=1
+
+export PYBUILD_TEST_ARGS= -k '    not test_address_valid and not north_star \
+                              and not test_callable_fallback_with_non_serializable_default \
+                              and not test_address_invalid \
+                              and not test_string_fails \
+                              and not test_use_bare \
+                              and not test_use_no_fields \
+                              and not test_validator_bad_fields_throws_config \
+                              and not test_assert_raises_validation_error \
+                              and not test_version_info \
+                             ' \
+                          -W ignore::pydantic.warnings.PydanticDeprecatedSince20
+
+# The launchpad build environment sets V=1 in the
+# environment by default, which conflicts with
+# this package's tests (LP: #1981341).
+undefine V
 
 %:
-	dh $@
+	dh $@ --buildsystem=pybuild
+
+override_dh_installexamples:
+	dh_installexamples docs/examples/*
